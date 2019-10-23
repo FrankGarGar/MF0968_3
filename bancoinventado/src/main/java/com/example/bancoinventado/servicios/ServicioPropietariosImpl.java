@@ -1,20 +1,24 @@
 package com.example.bancoinventado.servicios;
 
+import java.util.logging.Logger;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.example.bancoinventado.entidades.Propietario;
-import com.example.bancoinventado.repositorios.PropietarioDao;
+import com.example.bancoinventado.repositorios.jpa.PropietarioDaoJPA;
 
 @Named
 public class ServicioPropietariosImpl implements ServicioPropietarios<Propietario, Long>{
+	private Logger log = Logger.getLogger("TAREASERVICE");
 	@Inject
-	private PropietarioDao pDao;
+	private PropietarioDaoJPA pDao;
 
 	@Override
 	public Iterable<Propietario> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		log.info("SI");
+		log.warning(pDao.getAll().toString());
+		return pDao.getAll();
 	}
 
 	@Override
