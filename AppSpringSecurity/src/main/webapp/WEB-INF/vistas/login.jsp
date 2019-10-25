@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+	<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,8 +20,14 @@
 				<input type="password" class="inp" name="password"
 					placeholder=Password>
 			</div>
+			<c:if test="${error}">
+				<div class="alerta-red">${error}</div>
+			</c:if>
 			<div class="form-group">
-				<input type="submit" value="Login" class="btn b b-submit">
+				<input type="submit" value="Login" class="b b-submit">
+			</div>
+			<div class="form-group">
+				<p>No tienes Cuenta? <a href="register">click aqui!</a></p>
 			</div>
 		</form>
 	</div>

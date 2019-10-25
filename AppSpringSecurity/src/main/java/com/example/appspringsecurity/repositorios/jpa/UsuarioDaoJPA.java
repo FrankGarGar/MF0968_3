@@ -21,14 +21,13 @@ public class UsuarioDaoJPA implements UsuarioDao{
 	}
 
 	@Override
-	public Usuario save(Usuario Propietario) {
-		Propietario.setId(null);
-		return pRepo.save(Propietario);
+	public Usuario save(Usuario usuario) {
+		return pRepo.save(usuario);
 	}
 
 	@Override
-	public Usuario update(Usuario Propietario) {
-		return pRepo.save(Propietario);
+	public Usuario update(Usuario usuario) {
+		return pRepo.save(usuario);
 	}
 
 	@Override

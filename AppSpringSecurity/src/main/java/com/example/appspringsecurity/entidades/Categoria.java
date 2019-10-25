@@ -10,32 +10,13 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Entity
-@Table(name="usuarios")
-public @Data @NoArgsConstructor @AllArgsConstructor class Usuario {
+@Table(name="categorias")
+public @Data @NoArgsConstructor @AllArgsConstructor class Categoria {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
-	
-	private String username;
-	@NotNull
-	
-	private String password;
-	@NotNull
-	
 	private String nombre;
-	@NotNull
 	
-	private String apellidos;
-	@NotNull
-	
-	private Integer edad;
-	@NotNull
-	private char sexo;
-
-	private String role;
-	@NotNull
-	private boolean enabled; 
 }

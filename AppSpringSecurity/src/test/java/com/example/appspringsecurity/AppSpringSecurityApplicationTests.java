@@ -24,8 +24,8 @@ class AppSpringSecurityApplicationTests {
 		Usuario user = new Usuario();
 		user.setApellidos("Garcia Garcia");
 		user.setNombre("Francisco");
-		user.setUsername("admin2");
-		user.setPassword(pEncoder.encode("admin2"));
+		user.setUsername("admin");
+		user.setPassword(pEncoder.encode("admin"));
 		user.setEdad(26);
 		user.setSexo('M');
 		user.setRole("ADMIN");
