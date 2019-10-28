@@ -5,7 +5,7 @@
 
 <main>
 	<div class="contenedor">
-		<h1 class="title">Listado de productos</h1>
+		<h1 class="title">Listado de productos <span class="right"><a href="admin/productos/create"><i class="fas fa-plus"></i></a></span></h1>
 		<c:choose>
 			<c:when test="${productos!='[]'}">
 				<table>
@@ -17,6 +17,7 @@
 							<th>Categoria</th>
 							<th>Precio</th>
 							<th>Stock</th>
+							<th>Opciones</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -29,6 +30,10 @@
 								<td>${p.categoria.nombre}</td>
 								<td>${p.precio}</td>
 								<td>${p.stock}</td>
+								<td>
+									<a href="admin/productos/edit/${p.id}" class="b b-w"><i class="fas fa-edit"></i></a>
+									<a href="admin/productos/delete/${p.id}" class="b b-d"><i class="fas fa-trash"></i></a>
+								</td>
 							</tr>
 
 						</c:forEach>

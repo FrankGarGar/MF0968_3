@@ -27,7 +27,7 @@ class AppSpringSecurityApplicationTests {
 		user.setUsername("admin");
 		user.setPassword(pEncoder.encode("admin"));
 		user.setEdad(26);
-		user.setSexo('M');
+		user.setSexo("M");
 		user.setRole("ADMIN");
 		user.setEnabled(false);
 		Usuario respuesta = userRepo.save(user);

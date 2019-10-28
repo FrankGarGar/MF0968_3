@@ -5,7 +5,7 @@
 
 <main>
 	<div class="contenedor">
-		<h1 class="title">Listado de usuarios</h1>
+		<h1 class="title">Listado de usuarios <span class="right"><a href="admin/usuarios/create"><i class="fas fa-plus"></i></a></span></h1>
 		<c:choose>
 			<c:when test="${usuarios!='[]'}">
 				<table>
@@ -19,6 +19,7 @@
 							<th>Sexo</th>
 							<th>Activo</th>
 							<th>Rol</th>
+							<th>Opciones</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -33,6 +34,10 @@
 								<td>${u.sexo}</td>
 								<td>${u.enabled==true ? 'Activo' : 'Inactivo' }</td>
 								<td>${u.role}</td>
+								<td>
+									<a href="admin/usuarios/edit/${u.id}" class="b b-w"><i class="fas fa-edit"></i></a>
+									<a href="admin/usuarios/delete/${u.id}" class="b b-d"><i class="fas fa-trash"></i></a>
+								</td>
 							</tr>
 
 						</c:forEach>
