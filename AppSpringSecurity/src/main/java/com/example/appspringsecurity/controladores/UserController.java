@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import javax.validation.Valid;
 
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +28,8 @@ import com.example.appspringsecurity.servicios.ServicioUsuarioImpl;
 @Controller
 @RequestMapping("/user")
 public class UserController {
+
+	private Logger logCarrito = Logger.getLogger(Carrito.class);
 	@Autowired
 	private ServicioCategoriaImpl servicioC;
 	
@@ -41,6 +44,7 @@ public class UserController {
 		model.addAttribute("principal",principal);
 		Usuario user = servicioUser.getByUsername(principal.getName());
 		model.addAttribute("carrito",servicioCart.getCart(user));
+		logCarrito.info("Atributos cargados correctamente");
 		return model;
 	}
 	@GetMapping(value= {"/","/home"})
