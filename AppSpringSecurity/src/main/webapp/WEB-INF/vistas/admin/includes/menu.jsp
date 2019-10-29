@@ -11,3 +11,8 @@
 		<li><a href="logout">Logout</a></li>
 	</ul>
 </nav>
+<c:if test="${error!=null}">
+
+	<h3 class="message-error">${error}</h3>
+
+</c:if>
