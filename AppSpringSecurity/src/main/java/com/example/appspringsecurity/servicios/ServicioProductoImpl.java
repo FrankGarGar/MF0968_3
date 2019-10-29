@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 
+import com.example.appspringsecurity.entidades.Categoria;
 import com.example.appspringsecurity.entidades.Producto;
 import com.example.appspringsecurity.repositorios.jpa.ProductoDaoJPA;
 @Service
@@ -30,5 +31,8 @@ public class ServicioProductoImpl implements ServiciosDAOS<Producto, Long>{
 	public void delete(Long id) {
 		catRepo.delete(id);
 		
+	}
+	public Iterable<Producto> findByCategoria(Categoria cat) {
+		return catRepo.findByCategoria(cat);
 	}
 }

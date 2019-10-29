@@ -31,5 +31,7 @@ public class ServicioCategoriaImpl implements ServiciosDAOS<Categoria, Long>{
 		catRepo.delete(id);
 		
 	}
-	
+	public Categoria findByNombre(String nombre) {
+		return catRepo.findByNombre(nombre);
+	}
 }

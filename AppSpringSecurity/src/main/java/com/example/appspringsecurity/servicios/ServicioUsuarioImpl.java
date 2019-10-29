@@ -50,5 +50,8 @@ public class ServicioUsuarioImpl implements UserDetailsService,ServicioUsuario{
 		userRepo.delete(id);
 		
 	}
+	public Usuario getByUsername(String username) {
+		return userRepo.findByUsername(username);
+	}
 	
 }

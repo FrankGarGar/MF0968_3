@@ -36,4 +36,8 @@ public class CategoriaDaoJPA implements Dao<Categoria, Long>{
 		catRepo.deleteById(id);
 	}
 
+	public Categoria findByNombre(String nombre) {
+		return catRepo.findByNombre(nombre);
+	}
+
 }

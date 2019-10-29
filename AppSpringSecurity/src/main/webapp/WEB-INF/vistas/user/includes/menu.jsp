@@ -30,9 +30,19 @@
 				<div class="dropdown-menu" aria-labelledby="carrito">
 					<c:choose>
 						<c:when test="${carrito!=null }">
-							<c:forEach items="${carrito.productos}" var="prod">
-								<a class="dropdown-item" href="user/productos/${prod.id}">${prod.nombre} -> ${carrito.cantidad}</a>
+							<c:forEach items="${carrito.cartItems}" var="item">
+								<c:set var="total"
+									value="${total + (item.cantidad*item.producto.precio)}" />
+								<div class="dropdown-item">
+									<a class="text-body" href="user/productos/${item.producto.id}">${item.producto.nombre}
+										-> ${item.cantidad} = ${item.cantidad*item.producto.precio}€</a> <a
+										class="text-danger display-5"
+										href="user/productos/delete/${item.id}"><i
+										class="fas fa-times-circle"></i></a>
+								</div>
 							</c:forEach>
+							<div class="dropdown-item total text-center">Total:
+								${total} €</div>
 						</c:when>
 						<c:otherwise>
 							<p class="text-center">Carrito Vacio</p>
@@ -44,3 +54,8 @@
 		</ul>
 	</div>
 </nav>
+<c:if test="${error!=null}">
+
+	<h3 class="message-error">${error}</h3>
+
+</c:if>

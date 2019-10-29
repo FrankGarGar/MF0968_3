@@ -73,3 +73,20 @@ ul li a:hover {
 	font-weight:bold;
 	text-align:center;
 }
+.dropdown-menu .dropdown-item{
+	font-size:18px;
+}
+.dropdown-menu .dropdown-item .text-body{
+	color: black;
+}
+.total{
+	font-weight:bold;
+}
+.message-error {
+	text-align: center;
+	width: 40%;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: #de17178c;
+	border-radius: 10px;
+}

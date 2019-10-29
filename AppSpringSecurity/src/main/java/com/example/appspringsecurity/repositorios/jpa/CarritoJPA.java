@@ -9,10 +9,11 @@ import com.example.appspringsecurity.entidades.Usuario;
 public class CarritoJPA {
 	@Inject
 	private CarritoRepositorio cartRepo;
-	@Inject
-	private UsuariosRepositorios userRepo;
-	public Carrito getAll(String username) {
-		Usuario usuario = userRepo.findByUsername(username);
-		return cartRepo.findByUsuario(usuario);
+	public Carrito getAll(Usuario user) {
+		return cartRepo.findByUsuario(user);
+	}
+	public Carrito save(Carrito carrito) {
+		
+		return cartRepo.save(carrito);
 	}
 }
