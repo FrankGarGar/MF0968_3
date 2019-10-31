@@ -22,11 +22,11 @@ class AppSpringSecurityApplicationTests {
 	@Test
 	void crearUsuarioTest() {
 		Usuario user = new Usuario();
-		user.setApellidos("Garcia Garcia");
-		user.setNombre("Francisco");
-		user.setUsername("admin");
-		user.setPassword(pEncoder.encode("admin"));
-		user.setEdad(26);
+		user.setApellidos("Leteeee");
+		user.setNombre("Javier");
+		user.setUsername("javier");
+		user.setPassword(pEncoder.encode("lete"));
+		user.setEdad(40);
 		user.setSexo("M");
 		user.setRole("ADMIN");
 		user.setEnabled(false);
