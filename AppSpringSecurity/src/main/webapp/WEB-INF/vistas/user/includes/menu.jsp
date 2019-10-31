@@ -59,3 +59,12 @@
 	<h3 class="message-error">${error}</h3>
 
 </c:if>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
+<spring:hasBindErrors name="yourCommandName">
+  <c:if test="${errors.hasFieldErrors('username')}">
+    <c:set var="errorClass" value="error" />
+  </c:if>
+</spring:hasBindErrors>
+
+<div class="control-group <c:out value='${errorClass}' />"></div>

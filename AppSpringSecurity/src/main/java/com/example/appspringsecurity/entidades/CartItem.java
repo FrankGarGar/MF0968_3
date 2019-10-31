@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,6 @@ public @Data @NoArgsConstructor @AllArgsConstructor class CartItem {
 	private Long id;
 	@ManyToOne(cascade=CascadeType.REFRESH)
 	private Producto producto;
-
+	@Min(1)
 	private int cantidad;
 }

@@ -9,6 +9,7 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,7 +66,12 @@ public class UserController {
 	}
 
 	@PostMapping("/productos/addcart")
-	public String addCart(Model model, Principal principal, @Valid CartItem cartItem, @RequestParam Long producto_id) {
+	public String addCart(Model model, Principal principal, @Valid CartItem cartItem, @RequestParam Long producto_id,BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "user/productos";
+        }
+
 		Producto producto = new Producto();
 		producto.setId(producto_id);
 		cartItem.setProducto(producto);

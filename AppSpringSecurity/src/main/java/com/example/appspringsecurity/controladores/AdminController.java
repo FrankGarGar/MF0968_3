@@ -8,14 +8,20 @@ import javax.validation.Valid;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.example.appspringsecurity.config.ResourceNotFoundException;
 import com.example.appspringsecurity.entidades.Categoria;
 import com.example.appspringsecurity.entidades.Producto;
 import com.example.appspringsecurity.entidades.Usuario;
@@ -40,6 +46,12 @@ public class AdminController {
 	private Logger logUsuario = Logger.getLogger(Usuario.class);
 	private Logger logProducto = Logger.getLogger(Producto.class);
 	private Logger logCategoria = Logger.getLogger(Categoria.class);
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleResourceNotFoundException() {
+        return "admin/404";
+    }
 	@GetMapping(value = { "/", "/home" })
 	public String home(Model model, Principal principal) {
 
@@ -183,13 +195,18 @@ public class AdminController {
 
 	/* CREAR */
 	@GetMapping("/categorias/create")
-	public String categoriasAddGet(Model model) {
+	public String categoriasAddGet(Categoria categoria) {
 		logCategoria.info("Mostrando formulario de creación de categorias!");
 		return "admin/forms/createCategoria";
 	}
 
 	@PostMapping("/categorias/create")
-	public String categoriasAddPost(Model model, @Valid Categoria categoria) {
+	public String categoriasAddPost(@ModelAttribute("categoria") @Valid Categoria categoria,
+			BindingResult bindingResult, Model model) {
+
+		if (bindingResult.hasErrors()) {
+			return "admin/forms/createCategoria";
+		}
 		categoria = servicioC.save(categoria);
 		logCategoria.info("Categoria guardada correctamente!");
 		return "redirect:../";
@@ -197,7 +214,7 @@ public class AdminController {
 
 	/* EDITAR */
 	@GetMapping("/categorias/edit/{id}")
-	public String categoriasEditGet(Model model, @PathVariable("id") String id) {
+	public String categoriasEditGet(Model model, @PathVariable("id") String id, Categoria categoria) {
 		try {
 			model.addAttribute("categoria", servicioC.getOne(Long.parseLong(id)));
 			logCategoria.info("Mostrando formulario de edición de categoria!");
@@ -212,7 +229,11 @@ public class AdminController {
 	}
 
 	@PostMapping("/categorias/edit")
-	public String categoriasEditPost(Model model, @Valid Categoria categoria) {
+	public String categoriasEditPost(Model model, @ModelAttribute("categoria") @Valid Categoria categoria,
+			BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return "admin/forms/createCategoria";
+		}
 		categoria = servicioC.save(categoria);
 		logCategoria.info("Categoria modificada correctamente");
 		return "redirect:../categorias";
@@ -233,4 +254,5 @@ public class AdminController {
 		return "admin/categorias";
 	}
 	/*************** END MAPPING CATEGORIAS ***********************/
+
 }
