@@ -2,6 +2,8 @@ package com.francisco.apirestjs.entidades;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,10 +28,11 @@ public class Empresa {
 	private String nombre;
 	@NotNull
 	@Size(min=20,max=20)
+	@Column(unique=true)
 	private String codigoEmpresa;
 	@NotNull
 	@OneToOne
 	private Persona presidenteActual;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.PERSIST)
 	private Set<Edificio> sedes;
 }

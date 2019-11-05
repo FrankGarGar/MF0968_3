@@ -1,0 +1,28 @@
+@charset "UTF-8";
+.dn{
+	display:none;
+}
+.title{
+	text-align:center;
+}
+.btn{
+	margin: 0 10px;
+}
+th:last-child{
+	max-width:15%;
+	width: 15%;
+}
+.logo{
+	width: 50px;
+}
+.page-actual{
+	border: 1px solid;
+    border-color: black;
+    padding: 5px;
+    margin-top: 0px;
+    display: inline-block;
+}
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+}

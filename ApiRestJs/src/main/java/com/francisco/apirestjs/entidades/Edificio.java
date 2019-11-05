@@ -2,6 +2,7 @@ package com.francisco.apirestjs.entidades;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,13 +27,19 @@ public class Edificio {
 	@Size(max=50 , min=5)
 	private String nombre;
 	@NotNull
+	@Size(min=20,max=20)
+	@Column(unique=true)
 	private String codigoEdificio;
+	@NotNull
 	@Min(-90)
 	@Max(90)
 	private BigDecimal latitud;
+	@NotNull
 	@Min(-180)
 	@Max(180)
 	private BigDecimal longitud;
+	@NotNull
+	private BigDecimal altitud;
 	@NotNull
 	@OneToOne
 	private Empresa dueño;
