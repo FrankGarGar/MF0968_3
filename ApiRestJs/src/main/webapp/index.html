@@ -11,10 +11,19 @@
 <script src="resources/js/cliente.js"></script>
 <link rel="stylesheet" href="resources/css/font-awesome.all.min.css">
 <link rel="stylesheet" href="resources/css/cliente.css">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+	integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+	crossorigin="anonymous"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+	crossorigin="anonymous"></script>
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="index.html"><img alt="Logo" class="logo" title="Logo" src="resources/img/logo.png"></a>
+		<a class="navbar-brand" href="index.html"><img alt="Logo"
+			class="logo" title="Logo" src="resources/img/logo.png"></a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarSupportedContent"
 			aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -35,10 +44,10 @@
 				<li class="nav-item" data-tabla="empresas"><a class="nav-link"
 					href="#">Empresas</a></li>
 			</ul>
-			<form class="form-inline my-2 my-lg-0">
+			<form class="form-inline my-2 my-lg-0" onsubmit="return false;">
 				<input class="form-control mr-sm-2" type="search"
 					placeholder="Search" aria-label="Search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				
 			</form>
 		</div>
 	</nav>
@@ -46,7 +55,8 @@
 		<div class="table-responsive">
 
 			<h1 class="title"></h1>
-			<table data-tabla="personas" id="personas" class="dn table table-bordered text-center">
+			<table data-tabla="personas" id="personas"
+				class="dn table table-bordered text-center">
 
 				<thead>
 					<tr>
@@ -61,7 +71,8 @@
 
 				</tbody>
 			</table>
-			<table data-tabla="edificios" id="edificios" class="dn table table-bordered text-center">
+			<table data-tabla="edificios" id="edificios"
+				class="dn table table-bordered text-center">
 				<thead>
 					<tr>
 						<th>Nombre</th>
@@ -77,7 +88,8 @@
 
 				</tbody>
 			</table>
-			<table data-tabla="paises" id="paises" class="dn table table-bordered text-center">
+			<table data-tabla="paises" id="paises"
+				class="dn table table-bordered text-center">
 				<thead>
 					<tr>
 						<th>Nombre</th>
@@ -89,7 +101,8 @@
 
 				</tbody>
 			</table>
-			<table data-tabla="empresas" id="empresas" class="dn table table-bordered text-center">
+			<table data-tabla="empresas" id="empresas"
+				class="dn table table-bordered text-center">
 				<thead>
 					<tr>
 						<th>Nombre</th>
@@ -106,9 +119,211 @@
 		</div>
 		<div class="buttons dn">
 			<a href="#" class="prev btn btn-primary">Previous</a>
-			<span class="page-actual">1</span>
+			<div class="pages"></div>
 			<a href="#" class="next btn btn-primary">Next</a>
 		</div>
 	</main>
+
+
+	<!-- The Modal Personas-->
+	<div class="modal" id="Modalpersonas">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Añadir Persona</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<form id="form-persona">
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="nombre">Nombre</label>
+							<input type="text" name="nombre" class="inps" id="nombre"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="apellidos">Apellidos</label>
+							<input type="text" name="apellidos" class="inps" id="apellidos"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="dni">DNI</label>
+							<input type="text" name="dni" class="inps" id="dni" value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18"
+								for="nacionalidades">Nacionalidades</label> <select class="inps"
+								name="nacionalidades" id="nacionalidades" multiple="multiple">
+
+							</select>
+						</div>
+						<div class="form-group text-center">
+							<input type="submit" value="Guardar" class="btn btn-primary">
+						</div>
+					</form>
+				</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<!-- The Modal Edificios-->
+	<div class="modal" id="Modaledificios">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Añadir Edificio</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<form id="form-edificio">
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="nombre">Nombre</label>
+							<input type="text" name="nombre" class="inps" id="nombre"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18"
+								for="codigoEdificio">Código de empresa</label> <input
+								type="text" name="codigoEdificio" class="inps"
+								id="codigoEdificio" value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="latitud">Latitud</label>
+							<input type="text" name="latitud" class="inps" id="latitud"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="longitud">Longitud</label>
+							<input type="text" name="longitud" class="inps" id="longitud"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="altitud">Altitud</label>
+							<input type="text" name="altitud" class="inps" id="altitud"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="dueño">Dueño</label>
+							<select class="inps" name="dueño" id="dueño">
+
+							</select>
+						</div>
+						<div class="form-group text-center">
+							<input type="submit" value="Guardar" class="btn btn-primary">
+						</div>
+					</form>
+				</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<!-- The Modal Paises-->
+	<div class="modal" id="Modalpaises">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Añadir país</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<form id="form-pais">
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="nombre">Nombre</label>
+							<input type="text" name="nombre" class="inps" id="nombre"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="codigo">Código</label>
+							<input type="text" name="codigo" class="inps" id="codigo"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<input type="submit" value="Guardar" class="btn btn-primary">
+						</div>
+					</form>
+				</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<!-- The Modal Empresas-->
+	<div class="modal" id="Modalempresas">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">Añadir nueva Empresa</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<form id="form-empresa">
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="nombre">Nombre</label>
+							<input type="text" name="nombre" class="inps" id="nombre"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="codigoEmpresa">Código Empresa</label>
+							<input type="text" name="codigoEmpresa" class="inps" id="codigoEmpresa"
+								value="">
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="presidenteActual">Presidente Actual</label>
+							<select name="presidenteActual" id="presidenteActual" class="inps">
+							
+							</select>
+						</div>
+						<div class="form-group text-center">
+							<label class="d-block font-weight-bold font-18" for="sedes">Sedes</label>
+							<select name="sedes" id="sedes" class="inps" multiple="multiple">
+							
+							</select>
+						</div>
+						<div class="form-group text-center">
+							<input type="submit" value="Guardar" class="btn btn-primary">
+						</div>
+					</form>
+				</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<footer>
+		<h2>Desarrollado por Francisco García</h2>
+	</footer>
 </body>
 </html>

@@ -1,9 +1,22 @@
 @charset "UTF-8";
+body{
+	min-height: 100vh;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: normal;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
 .dn{
 	display:none;
 }
 .title{
 	text-align:center;
+	position:relative;
+}
+.font-18{
+	font-size:18px;
 }
 .btn{
 	margin: 0 10px;
@@ -25,4 +38,38 @@ th:last-child{
 a.disabled {
   pointer-events: none;
   cursor: default;
+}
+.buttons .btn{
+	margin: 2px;
+}
+.pages{
+	display:inline-block;
+	color:white;
+}
+.buttons .pages .act{
+	background-color: #a5a5a5;
+    border-color: #a5a5a5;
+    cursor: auto;
+}
+.table-responsive .title .pa{
+	position: absolute;
+    right: 10%;
+    bottom: 0;
+    color: #2dc874;
+    cursor: pointer;
+	transition:1s color ease;
+}
+.table-responsive .title .pa:hover{
+	color: #055353;
+}
+footer{
+	text-align:center;
+}
+.form-group .inps{
+	    border-radius: 5px;
+    border: 0;
+    box-shadow: 0px 0px 5px;
+    color: #17643a;
+    width: 200px;
+    padding: 2px;
 }
