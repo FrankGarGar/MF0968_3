@@ -2,6 +2,7 @@ package com.francisco.apirestjs.entidades;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -41,7 +42,7 @@ public class Edificio {
 	@NotNull
 	private BigDecimal altitud;
 	@NotNull
-	@OneToOne
+	@OneToOne(cascade = CascadeType.PERSIST)
 	private Empresa dueño;
 	
 }

@@ -31,7 +31,7 @@ public class Empresa {
 	@Column(unique=true)
 	private String codigoEmpresa;
 	@NotNull
-	@OneToOne
+	@OneToOne(cascade = CascadeType.PERSIST)
 	private Persona presidenteActual;
 	@OneToMany(cascade = CascadeType.PERSIST)
 	private Set<Edificio> sedes;

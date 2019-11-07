@@ -8,6 +8,9 @@ body{
     flex-direction: column;
     flex-wrap: wrap;
 }
+tr.dntr{
+	display:none;
+}
 .dn{
 	display:none;
 }
