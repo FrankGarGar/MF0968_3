@@ -34,6 +34,10 @@ public class Edificio {
 	@NotNull
 	@Min(-90)
 	@Max(90)
+	//deberia crear un bigdecimal para los grados, 
+	//otro para minutos y otro para segundos solo
+	//para la altitud o q sea tipo string.
+	//Igual para longitud
 	private BigDecimal latitud;
 	@NotNull
 	@Min(-180)

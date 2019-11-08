@@ -55,7 +55,8 @@ $(function(){
 		$(".next").removeClass("disabled");
 		
 		var tabla= $(this).data("tabla");
-		$(".title").html('Listado de '+ tabla + '<a class="pa" data-toggle="modal" data-target="#Modal'+ tabla + '"><i class="fas fa-plus"></i></a>');
+		var html=`Listado de ${tabla} <a class="pa" data-toggle="modal" data-target="#Modal${tabla}"><i class="fas fa-plus"></i></a>`;
+		$(".title").html(html);
 		
 		hacerAjax(tabla,page);
 	});
@@ -67,9 +68,6 @@ $(function(){
 		var codigo = $(this).find("#codigo").val();
 		var pais = {nombre,codigo};
 		if(saveObject(tabla,pais)){
-			$("#form-pais")[0].reset();
-			$(".close").click();
-			$(".nav-item:nth-child(4)").click();
 			optionsNacionalidades();
 		}else{
 			
@@ -87,9 +85,6 @@ $(function(){
 		
 		var persona = {nombre,apellidos,dni,nacionalidades};
 		if(saveObject(tabla,persona)){
-			$("#form-persona")[0].reset();
-			$(".close").click();
-			$(".nav-item:nth-child(2)").click();
 			optionsPersonas();
 		}else{
 			
@@ -107,9 +102,6 @@ $(function(){
 		var dueño = $(this).find("#dueño").val();
 		var edificio = {nombre,codigoEdificio,latitud,longitud,altitud,dueño};
 		if(saveObject(tabla,edificio)){
-			$("#form-persona")[0].reset();
-			$(".close").click();
-			$(".nav-item:nth-child(3)").click();
 			optionsEdificios();
 		}else{
 			
@@ -125,10 +117,67 @@ $(function(){
 		var sedes = $(this).find("#sedes").val();
 		var edificio = {nombre,codigoEmpresa,presidenteActual,sedes};
 		if(saveObject(tabla,edificio)){
-			$("#form-persona")[0].reset();
-			$(".close").click();
-			$(".nav-item:nth-child(5)").click();
 			optionsEmpresas();
+		}else{
+			
+		}
+	});
+	$("#form-edit-pais").submit(function(e){
+		e.preventDefault();
+		var tabla = $(this).find("#id-pais").val();
+		var nombre = $(this).find("#nombre").val();
+		var codigo = $(this).find("#codigo").val();
+		var pais = {nombre,codigo};
+		if(editObject(tabla,pais)){
+			optionsNacionalidades();
+		}else{
+			
+		}
+		
+	});
+	$("#form-edit-persona").submit(function(e){
+		e.preventDefault();
+		var tabla = $(this).find("#id-persona").val();
+		var nombre = $(this).find("#nombre").val();
+		var apellidos = $(this).find("#apellidos").val();
+		var dni = $(this).find("#dni").val();
+		var nacionalidades = $(this).find("#nacionalidades").val();
+		
+		var persona = {nombre,apellidos,dni,nacionalidades};
+		if(editObject(tabla,persona)){
+			optionsPersonas();
+		}else{
+			
+		}
+	});
+	$("#form-edit-edificio").submit(function(e){
+		e.preventDefault();
+		var tabla = $(this).find("#id-edificio").val();
+		var nombre = $(this).find("#nombre").val();
+		var codigoEdificio = $(this).find("#codigoEdificio").val();
+		var latitud = $(this).find("#latitud").val();
+		var longitud = $(this).find("#longitud").val();
+		var altitud = $(this).find("#altitud").val();
+		var dueño = $(this).find("#dueño").val();
+		var edificio = {nombre,codigoEdificio,latitud,longitud,altitud,dueño};
+		if(editObject(tabla,edificio)){
+			optionsEdificios();
+		}else{
+			
+		}
+	});
+	$("#form-edit-empresa").submit(function(e){
+		e.preventDefault();
+		var tabla = $(this).find("#id-empresa").val();
+
+		var nombre = $(this).find("#nombre").val();
+		var codigoEmpresa = $(this).find("#codigoEmpresa").val();
+		var presidenteActual = $(this).find("#presidenteActual").val();
+		var sedes = $(this).find("#sedes").val();
+		var edificio = {nombre,codigoEmpresa,presidenteActual,sedes};
+		if(editObject(tabla,edificio)){
+			optionsEmpresas();
+			console.log($(".activo tbody tr td:last-child"));
 		}else{
 			
 		}
@@ -151,15 +200,33 @@ function saveObject(tabla,object){
 		return false;
 	});
 }
+function editObject(tabla,object){
+	var opcionesAjax = {
+            url: tabla,
+            method: 'PUT',
+            data: JSON.stringify(object),
+            contentType: 'application/json',
+            dataType: 'json'
+        };
+	$.ajax(opcionesAjax)
+	.done(function(respuesta){
+		$(".close").click();
+		$(".pages .act").click();
+		return true;
+	}).fail(function(respuesta){
+		alert('Fallo al guardar el/la ' + tabla);
+		return false;
+	});
+}
 //Listar respuesta del ajax para tabla personas
 function obtenerListadoPersonas(tabla,respuesta){
 	var tbody= $("#"+tabla+" tbody");
 	tbody.empty();
-	$(respuesta._embedded.personas).each(function(key){
-		var nacionalidades="";
-		tbody.append("<tr></tr>");
-		tbody.find('tr').last().append('<td>' + this.nombre + '</td><td>' + this.apellidos + ' </td><td>' + this.dni + '</td>');
-		
+	var nacionalidades;
+	let html;
+	let personas = respuesta._embedded.personas;
+	$(personas).each(function(key){
+		nacionalidades="";
 		$(this._embedded.nacionalidades).each(function(key){
 			if(key==0){
 				nacionalidades+=this.nombre;
@@ -167,30 +234,56 @@ function obtenerListadoPersonas(tabla,respuesta){
 				nacionalidades+=", "+this.nombre;
 			}
 		});
-
-		tbody.find("tr").last().append('<td>' + nacionalidades + '</td>');
-		tbody.find("tr").last().append('<td><a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormPersonas(this);" data-toggle="modal" data-target="#ModalEditpersonas"><i class="fas fa-edit"></i></a><a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);"><i class="fas fa-trash"></i></a></td>');
+		html=`
+			<tr>
+				<td>${this.nombre}</td>
+				<td>${this.apellidos}</td>
+				<td>${this.dni}</td>
+				<td>${nacionalidades}</td>
+				<td>
+					<a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormPersonas(this);" data-toggle="modal" data-target="#ModalEditpersonas">
+						<i class="fas fa-edit"></i>
+					</a>
+					<a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);">
+						<i class="fas fa-trash"></i>
+					</a>
+				</td>
+			</tr>`;
+		tbody.append(html);
 	});
 }
 //Listar respuesta del ajax para tabla paises
 function obtenerListadoPaises(tabla,respuesta){
 	var tbody= $("#"+tabla+" tbody");
 	tbody.empty();
-	$(respuesta._embedded.paises).each(function(key){
-		tbody.append("<tr></tr>");
-		tbody.find('tr').last().append('<td>' + this.nombre + '</td><td>' + this.codigo + ' </td>');
-		
-		tbody.find("tr").last().append('<td><a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormPaises(this);" data-toggle="modal" data-target="#ModalEditpaises"><i class="fas fa-edit"></i></a><a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);"><i class="fas fa-trash"></i></a></td>');
+	let html;
+	let paises= respuesta._embedded.paises;
+	$(paises).each(function(key){
+		html=`
+			<tr>
+				<td>${this.nombre}</td>
+				<td>${this.codigo}</td>
+				<td>
+					<a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormPaises(this);" data-toggle="modal" data-target="#ModalEditpaises">
+						<i class="fas fa-edit"></i>
+					</a>
+					<a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);">
+						<i class="fas fa-trash"></i>
+					</a>
+				</td>
+			</tr>`;
+		tbody.append(html);
 	});
 }
 //listar respuesta del ajax para tabla empresas
 function obtenerListadoEmpresas(tabla,respuesta){
 	var tbody= $("#"+tabla+" tbody");
 	tbody.empty();
-	$(respuesta._embedded.empresas).each(function(key){
-		var sedes ="";
-		tbody.append("<tr></tr>");
-		tbody.find('tr').last().append('<td>' + this.nombre + '</td><td>' + this.codigoEmpresa + ' </td><td>' + this._embedded.presidenteActual.nombre + ' ' + this._embedded.presidenteActual.apellidos + '</td>');
+	let html;
+	let sedes;
+	let empresas= respuesta._embedded.empresas;
+	$(empresas).each(function(key){
+		sedes ="";
 		if(this._embedded.sedes!=undefined){
 			$(this._embedded.sedes).each(function(key){
 				if(key==0){
@@ -200,20 +293,51 @@ function obtenerListadoEmpresas(tabla,respuesta){
 				}
 			});
 		}
-		tbody.find("tr").last().append('<td>' + sedes + '</td>');
-		tbody.find("tr").last().append('<td><a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormEmpresas(this);" data-toggle="modal" data-target="#ModalEditempresas"><i class="fas fa-edit"></i></a><a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);"><i class="fas fa-trash"></i></a></td>');
+		html=`
+			<tr>
+				<td>${this.nombre}</td>
+				<td>${this.codigoEmpresa}</td>
+				<td>${this._embedded.presidenteActual.nombre + ' ' + this._embedded.presidenteActual.apellidos }</td>
+				<td>${sedes}</td>
+				<td>
+					<a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormEmpresas(this);" data-toggle="modal" data-target="#ModalEditempresas">
+						<i class="fas fa-edit"></i>
+					</a>
+					<a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);">
+						<i class="fas fa-trash"></i>
+					</a>
+				</td>
+			</tr>`;
+
+		tbody.append(html);
 	});
 }
 //Listar respuesta del ajax para tabla edificios
 function obtenerListadoEdificios(tabla,respuesta){
 	var tbody= $("#"+tabla+" tbody");
 	tbody.empty();
-	$(respuesta._embedded.edificios).each(function(key){
-		//para el link de la entidad = this._links.self.href
-		tbody.append('<tr></tr>');
-		tbody.find('tr').last().append('<td>' + this.nombre + '</td><td>' + this.codigoEdificio + ' </td><td>' + this.latitud + '</td><td>' + this.longitud + '</td><td>' + this.altitud + '</td><td>' + this._embedded.dueño.nombre + '</td>');
-
-		tbody.find("tr").last().append('<td><a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormEdificios(this);" data-toggle="modal" data-target="#ModalEditedificios"><i class="fas fa-edit"></i></a><a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);"><i class="fas fa-trash"></i></a></td>');
+	let html;
+	let edificios= respuesta._embedded.edificios;
+	$(edificios).each(function(key){
+		html=`
+			<tr>
+				<td>${this.nombre}</td>
+				<td>${this.codigoEdificio}</td>
+				<td>${this.latitud}</td>
+				<td>${this.longitud}</td>
+				<td>${this.altitud}</td>
+				<td>${this._embedded.dueño.nombre}</td>
+				<td>${sedes}</td>
+				<td>
+					<a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormEmpresas(this);" data-toggle="modal" data-target="#ModalEditempresas">
+						<i class="fas fa-edit"></i>
+					</a>
+					<a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);">
+						<i class="fas fa-trash"></i>
+					</a>
+				</td>
+			</tr>`;
+		tbody.append(html);
 	});
 }
 //Obtener pagina y hacer el ajax 
@@ -243,9 +367,9 @@ function hacerAjax(tabla,page){
 		var paginas = "";
 		for(var i=0;i<=totalPages;i++){
 			if(i==pageAct){
-				paginas+='<a class="btn btn-primary act">' + (i+1) + '</a>';
+				paginas+=`<a class="btn btn-primary act">${(i+1)}</a>`;
 			}else{
-				paginas+='<a class="btn btn-primary" onclick="getPage(this)">' + (i+1) + '</a>';
+				paginas+=`<a class="btn btn-primary" onclick="getPage(this)">${(i+1)}</a>`;
 			}
 		}
 		$(".pages").html(paginas);
@@ -287,7 +411,7 @@ function optionsNacionalidades(){
 	}).done(function(respuesta){
 		$(".nacionalidades").empty();
 		$(respuesta._embedded.paises).each(function(key){
-			$(".nacionalidades").append('<option value="' + this._links.self.href + '">' + this.nombre + '</option>');
+			$(".nacionalidades").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
 		alert('Fallo al cargar los datos');
@@ -302,7 +426,7 @@ function optionsEmpresas(){
 	}).done(function(respuesta){
 		$(".dueño").empty();
 		$(respuesta._embedded.empresas).each(function(key){
-			$(".dueño").append('<option value="' + this._links.self.href + '">' + this.nombre + '</option>');
+			$(".dueño").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
 		alert('Fallo al cargar los datos');
@@ -317,7 +441,7 @@ function optionsEdificios(){
 	}).done(function(respuesta){
 		$(".sedes").empty();
 		$(respuesta._embedded.edificios).each(function(key){
-			$(".sedes").append('<option value="' + this._links.self.href + '">' + this.nombre + '</option>');
+			$(".sedes").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
 		alert('Fallo al cargar los datos');
@@ -333,7 +457,7 @@ function optionsPersonas(){
 	}).done(function(respuesta){
 		$(".presidenteActual").empty();
 		$(respuesta._embedded.personas).each(function(key){
-			$(".presidenteActual").append('<option value="' + this._links.self.href + '">' + this.nombre + '</option>');
+			$(".presidenteActual").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
 		alert('Fallo al cargar los datos');
@@ -367,6 +491,7 @@ function fillFormPersonas(t){
 		$("#form-edit-persona #nombre").val(respuesta.nombre);
 		$("#form-edit-persona #apellidos").val(respuesta.apellidos);
 		$("#form-edit-persona #dni").val(respuesta.dni);
+		$("#form-edit-persona #id-persona").val(respuesta._links.self.href);
 		var nacionalidad;
 		$(respuesta._embedded.nacionalidades).each(function(key){
 			nacionalidad=this;
@@ -387,9 +512,10 @@ function fillFormPaises(t){
 		method:'GET',
 		contentType: "application/json"
 	}).done(function(respuesta){
+		console.log(respuesta);
 		$("#form-edit-pais #nombre").val(respuesta.nombre);
 		$("#form-edit-pais #codigo").val(respuesta.codigo);
-		
+		$("#form-edit-pais #id-pais").val(respuesta._links.self.href);
 	}).fail(function(respuesta){
 		alert('Fallo al cargar Eliminar el registro');
 	});
@@ -400,7 +526,7 @@ function fillFormEmpresas(t){
 		method:'GET',
 		contentType: "application/json"
 	}).done(function(respuesta){
-		$("#form-edit-empresa")[0].reset();
+		$("#form-edit-empresa #id-empresa").val(respuesta._links.self.href);
 		$("#form-edit-empresa #nombre").val(respuesta.nombre);
 		$("#form-edit-empresa #codigoEmpresa").val(respuesta.codigoEmpresa);
 		$("#form-edit-empresa #presidenteActual").val(respuesta.presidenteActual);
@@ -433,7 +559,7 @@ function fillFormEdificios(t){
 		method:'GET',
 		contentType: "application/json"
 	}).done(function(respuesta){
-		$("#form-edit-edificio")[0].reset();
+		$("#form-edit-edificio #id-edificio").val(respuesta._links.self.href);
 		$("#form-edit-edificio #nombre").val(respuesta.nombre);
 		$("#form-edit-edificio #codigoEdificio").val(respuesta.codigoEdificio);
 		$("#form-edit-edificio #latitud").val(respuesta.latitud);

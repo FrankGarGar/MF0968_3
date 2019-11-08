@@ -55,9 +55,7 @@ a.disabled {
     cursor: auto;
 }
 .table-responsive .title .pa{
-	position: absolute;
-    right: 10%;
-    bottom: 0;
+	float: right;
     color: #2dc874;
     cursor: pointer;
 	transition:1s color ease;
