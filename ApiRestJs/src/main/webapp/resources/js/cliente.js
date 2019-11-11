@@ -1,4 +1,5 @@
 'use strict';
+//var URL = window.location.href + '/api/';
 var URL = 'http://localhost:8080/api/';
 var page=0;
 var size=4;
@@ -124,11 +125,20 @@ $(function(){
 	});
 	$("#form-edit-pais").submit(function(e){
 		e.preventDefault();
-		var tabla = $(this).find("#id-pais").val();
-		var nombre = $(this).find("#nombre").val();
-		var codigo = $(this).find("#codigo").val();
-		var pais = {nombre,codigo};
-		if(editObject(tabla,pais)){
+		let tabla = $(this).find("#id-pais").val();
+		let nombre = $(this).find("#nombre").val();
+		let codigo = $(this).find("#codigo").val();
+		let pais = {nombre,codigo};
+		let resp= editObject(tabla,pais);
+		if(resp){
+			let td =$(".activo tbody tr td:last-child");
+			$(td).each(function(e){
+				if($(this).find(".btn-warning").data("url")==tabla){
+					$(this).prev().html(pais.codigo);
+					$(this).prev().prev().html(pais.nombre);
+					return false;
+				}
+			});
 			optionsNacionalidades();
 		}else{
 			
@@ -137,14 +147,33 @@ $(function(){
 	});
 	$("#form-edit-persona").submit(function(e){
 		e.preventDefault();
-		var tabla = $(this).find("#id-persona").val();
-		var nombre = $(this).find("#nombre").val();
-		var apellidos = $(this).find("#apellidos").val();
-		var dni = $(this).find("#dni").val();
-		var nacionalidades = $(this).find("#nacionalidades").val();
-		
-		var persona = {nombre,apellidos,dni,nacionalidades};
-		if(editObject(tabla,persona)){
+		let tabla = $(this).find("#id-persona").val();
+		let nombre = $(this).find("#nombre").val();
+		let apellidos = $(this).find("#apellidos").val();
+		let dni = $(this).find("#dni").val();
+		let nacionalidades = $(this).find("#nacionalidades").val();
+		let persona = {nombre,apellidos,dni,nacionalidades};
+		let resp= editObject(tabla,persona);
+		if(resp){
+			let td =$(".activo tbody tr td:last-child");
+			let nacionalidadesTexto="";
+			$(td).each(function(e){
+				if($(this).find(".btn-warning").data("url")==tabla){
+					$("#form-edit-persona #nacionalidades option:selected").each(function(key){
+						if(key==0){
+							nacionalidadesTexto=$(this).html();
+						}else{
+							nacionalidadesTexto+="," + $(this).html();
+						}
+						
+					});
+					$(this).prev().html(nacionalidadesTexto);
+					$(this).prev().prev().html(dni);
+					$(this).prev().prev().prev().html(apellidos);
+					$(this).prev().prev().prev().prev().html(nombre);
+					return false;
+				}
+			});
 			optionsPersonas();
 		}else{
 			
@@ -152,14 +181,14 @@ $(function(){
 	});
 	$("#form-edit-edificio").submit(function(e){
 		e.preventDefault();
-		var tabla = $(this).find("#id-edificio").val();
-		var nombre = $(this).find("#nombre").val();
-		var codigoEdificio = $(this).find("#codigoEdificio").val();
-		var latitud = $(this).find("#latitud").val();
-		var longitud = $(this).find("#longitud").val();
-		var altitud = $(this).find("#altitud").val();
-		var dueño = $(this).find("#dueño").val();
-		var edificio = {nombre,codigoEdificio,latitud,longitud,altitud,dueño};
+		let tabla = $(this).find("#id-edificio").val();
+		let nombre = $(this).find("#nombre").val();
+		let codigoEdificio = $(this).find("#codigoEdificio").val();
+		let latitud = $(this).find("#latitud").val();
+		let longitud = $(this).find("#longitud").val();
+		let altitud = $(this).find("#altitud").val();
+		let dueño = $(this).find("#dueño").val();
+		let edificio = {nombre,codigoEdificio,latitud,longitud,altitud,dueño};
 		if(editObject(tabla,edificio)){
 			optionsEdificios();
 		}else{
@@ -168,23 +197,23 @@ $(function(){
 	});
 	$("#form-edit-empresa").submit(function(e){
 		e.preventDefault();
-		var tabla = $(this).find("#id-empresa").val();
+		let tabla = $(this).find("#id-empresa").val();
 
-		var nombre = $(this).find("#nombre").val();
-		var codigoEmpresa = $(this).find("#codigoEmpresa").val();
-		var presidenteActual = $(this).find("#presidenteActual").val();
-		var sedes = $(this).find("#sedes").val();
-		var edificio = {nombre,codigoEmpresa,presidenteActual,sedes};
+		let nombre = $(this).find("#nombre").val();
+		let codigoEmpresa = $(this).find("#codigoEmpresa").val();
+		let presidenteActual = $(this).find("#presidenteActual").val();
+		let sedes = $(this).find("#sedes").val();
+		let edificio = {nombre,codigoEmpresa,presidenteActual,sedes};
 		if(editObject(tabla,edificio)){
 			optionsEmpresas();
-			console.log($(".activo tbody tr td:last-child"));
 		}else{
 			
 		}
+		
 	});
 });
 function saveObject(tabla,object){
-	var opcionesAjax = {
+	let opcionesAjax = {
             url: URL+tabla,
             method: 'POST',
             data: JSON.stringify(object),
@@ -196,33 +225,40 @@ function saveObject(tabla,object){
 		$(".close").click();
 		return true;
 	}).fail(function(respuesta){
-		alert('Fallo al guardar el/la ' + tabla);
+		console.log('Fallo al guardar el/la ' +tabla);
 		return false;
 	});
 }
-function editObject(tabla,object){
-	var opcionesAjax = {
+async function editObject(tabla,object){
+	let opcionesAjax = {
             url: tabla,
             method: 'PUT',
             data: JSON.stringify(object),
             contentType: 'application/json',
             dataType: 'json'
         };
+
+	
+	return await ajax1(opcionesAjax);
+	
+}
+async function ajax1(opcionesAjax){
+	let res;
 	$.ajax(opcionesAjax)
 	.done(function(respuesta){
 		$(".close").click();
-		$(".pages .act").click();
-		return true;
+		res = true;
 	}).fail(function(respuesta){
-		alert('Fallo al guardar el/la ' + tabla);
-		return false;
+		console.log('Fallo al guardar el/la ' +tabla);
+		res = false;
 	});
+	return res
 }
 //Listar respuesta del ajax para tabla personas
 function obtenerListadoPersonas(tabla,respuesta){
-	var tbody= $("#"+tabla+" tbody");
+	let tbody= $("#"+tabla+" tbody");
 	tbody.empty();
-	var nacionalidades;
+	let nacionalidades;
 	let html;
 	let personas = respuesta._embedded.personas;
 	$(personas).each(function(key){
@@ -241,10 +277,10 @@ function obtenerListadoPersonas(tabla,respuesta){
 				<td>${this.dni}</td>
 				<td>${nacionalidades}</td>
 				<td>
-					<a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormPersonas(this);" data-toggle="modal" data-target="#ModalEditpersonas">
+					<a href="#" class="btn btn-warning" data-url="${this._links.self.href}" onclick="fillFormPersonas(this);" data-toggle="modal" data-target="#ModalEditpersonas">
 						<i class="fas fa-edit"></i>
 					</a>
-					<a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);">
+					<a href="#" class="btn btn-danger" data-url="${this._links.self.href}" onclick="deleteRegister(this);">
 						<i class="fas fa-trash"></i>
 					</a>
 				</td>
@@ -254,7 +290,7 @@ function obtenerListadoPersonas(tabla,respuesta){
 }
 //Listar respuesta del ajax para tabla paises
 function obtenerListadoPaises(tabla,respuesta){
-	var tbody= $("#"+tabla+" tbody");
+	let tbody= $("#"+tabla+" tbody");
 	tbody.empty();
 	let html;
 	let paises= respuesta._embedded.paises;
@@ -264,10 +300,10 @@ function obtenerListadoPaises(tabla,respuesta){
 				<td>${this.nombre}</td>
 				<td>${this.codigo}</td>
 				<td>
-					<a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormPaises(this);" data-toggle="modal" data-target="#ModalEditpaises">
+					<a href="#" class="btn btn-warning" data-url="${this._links.self.href}" onclick="fillFormPaises(this);" data-toggle="modal" data-target="#ModalEditpaises">
 						<i class="fas fa-edit"></i>
 					</a>
-					<a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);">
+					<a href="#" class="btn btn-danger" data-url="${this._links.self.href}" onclick="deleteRegister(this);">
 						<i class="fas fa-trash"></i>
 					</a>
 				</td>
@@ -277,7 +313,7 @@ function obtenerListadoPaises(tabla,respuesta){
 }
 //listar respuesta del ajax para tabla empresas
 function obtenerListadoEmpresas(tabla,respuesta){
-	var tbody= $("#"+tabla+" tbody");
+	let tbody= $("#"+tabla+" tbody");
 	tbody.empty();
 	let html;
 	let sedes;
@@ -300,10 +336,10 @@ function obtenerListadoEmpresas(tabla,respuesta){
 				<td>${this._embedded.presidenteActual.nombre + ' ' + this._embedded.presidenteActual.apellidos }</td>
 				<td>${sedes}</td>
 				<td>
-					<a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormEmpresas(this);" data-toggle="modal" data-target="#ModalEditempresas">
+					<a href="#" class="btn btn-warning" data-url="${this._links.self.href}" onclick="fillFormEmpresas(this);" data-toggle="modal" data-target="#ModalEditempresas">
 						<i class="fas fa-edit"></i>
 					</a>
-					<a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);">
+					<a href="#" class="btn btn-danger" data-url="${this._links.self.href}" onclick="deleteRegister(this);">
 						<i class="fas fa-trash"></i>
 					</a>
 				</td>
@@ -314,11 +350,12 @@ function obtenerListadoEmpresas(tabla,respuesta){
 }
 //Listar respuesta del ajax para tabla edificios
 function obtenerListadoEdificios(tabla,respuesta){
-	var tbody= $("#"+tabla+" tbody");
+	let tbody= $("#"+tabla+" tbody");
 	tbody.empty();
 	let html;
 	let edificios= respuesta._embedded.edificios;
 	$(edificios).each(function(key){
+		console.log(this);
 		html=`
 			<tr>
 				<td>${this.nombre}</td>
@@ -327,12 +364,12 @@ function obtenerListadoEdificios(tabla,respuesta){
 				<td>${this.longitud}</td>
 				<td>${this.altitud}</td>
 				<td>${this._embedded.dueño.nombre}</td>
-				<td>${sedes}</td>
+				<td>${this._embedded.sedes.nombre}</td>
 				<td>
-					<a href="#" class="btn btn-warning" data-url="' + this._links.self.href + '" onclick="fillFormEmpresas(this);" data-toggle="modal" data-target="#ModalEditempresas">
+					<a href="#" class="btn btn-warning" data-url="${this._links.self.href}" onclick="fillFormEmpresas(this);" data-toggle="modal" data-target="#ModalEditempresas">
 						<i class="fas fa-edit"></i>
 					</a>
-					<a href="#" class="btn btn-danger" data-url="' + this._links.self.href + '" onclick="deleteRegister(this);">
+					<a href="#" class="btn btn-danger" data-url="${this._links.self.href}" onclick="deleteRegister(this);">
 						<i class="fas fa-trash"></i>
 					</a>
 				</td>
@@ -344,9 +381,9 @@ function obtenerListadoEdificios(tabla,respuesta){
 function getPage(t){
 	$(".prev").removeClass("disabled");
 	$(".next").removeClass("disabled");
-	var page=parseInt($(t).html())-1;
+	let page=parseInt($(t).html())-1;
 
-	var tabla = $(".activo").data("tabla");
+	let tabla = $(".activo").data("tabla");
 	hacerAjax(tabla,page);
 }
 //Ajax para listado de tablas
@@ -361,10 +398,10 @@ function hacerAjax(tabla,page){
 				$(this).addClass('dn');
 			}
 		});
-		var pageAct = respuesta.page.number;
-		var totalPages = respuesta.page.totalPages-1;
+		let pageAct = respuesta.page.number;
+		let totalPages = respuesta.page.totalPages-1;
 		$(".pages").empty();
-		var paginas = "";
+		let paginas = "";
 		for(var i=0;i<=totalPages;i++){
 			if(i==pageAct){
 				paginas+=`<a class="btn btn-primary act">${(i+1)}</a>`;
@@ -399,7 +436,7 @@ function hacerAjax(tabla,page){
 			obtenerListadoEdificios(tabla,respuesta);
 		}
 	}).fail(function(respuesta){
-		alert('Fallo al cargar los datos');
+		console.log('Fallo al guardar el/la ' +tabla);
 	});
 }
 //RELLENAR SELECT DE PAISES
@@ -414,7 +451,7 @@ function optionsNacionalidades(){
 			$(".nacionalidades").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
-		alert('Fallo al cargar los datos');
+		console.log('Fallo al guardar el/la ' +tabla);
 	});
 }
 //RELLENAR SELECT DE EMPRESAS
@@ -429,7 +466,7 @@ function optionsEmpresas(){
 			$(".dueño").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
-		alert('Fallo al cargar los datos');
+		console.log('Fallo al guardar el/la ' +tabla);
 	});
 }
 //RELLENAR SELECT DE EDIFICIOS
@@ -444,7 +481,7 @@ function optionsEdificios(){
 			$(".sedes").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
-		alert('Fallo al cargar los datos');
+		console.log('Fallo al guardar el/la ' +tabla);
 	});
 }
 //RELLENAR SELECT DE PERSONAS
@@ -460,12 +497,12 @@ function optionsPersonas(){
 			$(".presidenteActual").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
-		alert('Fallo al cargar los datos');
+		console.log('Fallo al guardar el/la ' +tabla);
 	});
 }
 /*BORRAR CUALQUIER REGISTRO DE CUALQUIER TABLA*/
 function deleteRegister(t){
-	var res= confirm("¿Estás seguro de borrar este registro?");
+	let res= confirm("¿Estás seguro de borrar este registro?");
 	if(res){
 		$.ajax({
 			url:$(t).data("url"),
@@ -474,7 +511,7 @@ function deleteRegister(t){
 		}).done(function(respuesta){
 			$(t).parent().parent().remove();
 		}).fail(function(respuesta){
-			alert('Fallo al cargar Eliminar el registro');
+			console.log('Fallo al cargar Eliminar el registro');
 		});
 	}else{
 		
@@ -503,7 +540,7 @@ function fillFormPersonas(t){
 			});
 		});
 	}).fail(function(respuesta){
-		alert('Fallo al cargar Eliminar el registro');
+		console.log('Fallo al cargar Eliminar el registro');
 	});
 }
 function fillFormPaises(t){
@@ -512,12 +549,11 @@ function fillFormPaises(t){
 		method:'GET',
 		contentType: "application/json"
 	}).done(function(respuesta){
-		console.log(respuesta);
 		$("#form-edit-pais #nombre").val(respuesta.nombre);
 		$("#form-edit-pais #codigo").val(respuesta.codigo);
 		$("#form-edit-pais #id-pais").val(respuesta._links.self.href);
 	}).fail(function(respuesta){
-		alert('Fallo al cargar Eliminar el registro');
+		console.log('Fallo al cargar Eliminar el registro');
 	});
 }
 function fillFormEmpresas(t){
@@ -530,7 +566,7 @@ function fillFormEmpresas(t){
 		$("#form-edit-empresa #nombre").val(respuesta.nombre);
 		$("#form-edit-empresa #codigoEmpresa").val(respuesta.codigoEmpresa);
 		$("#form-edit-empresa #presidenteActual").val(respuesta.presidenteActual);
-		var presidenteActual = respuesta._embedded.presidenteActual.nombre;
+		let presidenteActual = respuesta._embedded.presidenteActual.nombre;
 		$("#form-edit-empresa #presidenteActual option").each(function(key2){
 			if($(this).html()==presidenteActual){
 				$(this).attr("selected",true);
@@ -539,7 +575,7 @@ function fillFormEmpresas(t){
 				$(this).attr("selected",false);
 			}
 		});
-		var sede;
+		let sede;
 		$(respuesta._embedded.sedes).each(function(key){
 			sede=this;
 			$("#form-edit-empresa #sedes option").each(function(key2){
@@ -550,7 +586,7 @@ function fillFormEmpresas(t){
 			});
 		});
 	}).fail(function(respuesta){
-		alert('Fallo al cargar Eliminar el registro');
+		console.log('Fallo al cargar el registro');
 	});
 }
 function fillFormEdificios(t){
@@ -566,7 +602,7 @@ function fillFormEdificios(t){
 		$("#form-edit-edificio #longitud").val(respuesta.longitud);
 		$("#form-edit-edificio #altitud").val(respuesta.altitud);
 		$("#form-edit-edificio #dueño").val(respuesta.dueño);
-		var dueño = respuesta._embedded.dueño.nombre;
+		let dueño = respuesta._embedded.dueño.nombre;
 			$("#form-edit-edificio #dueño option").each(function(key2){
 				if($(this).html()==dueño){
 					$(this).attr("selected",true);
@@ -576,6 +612,6 @@ function fillFormEdificios(t){
 				}
 			});
 	}).fail(function(respuesta){
-		alert('Fallo al cargar Eliminar el registro');
+		alert('Fallo al cargar el registro');
 	});
 }
