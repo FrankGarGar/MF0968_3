@@ -19,240 +19,304 @@ $(function(){
 			page = page+1;
 		}
 		var tabla = $(".activo").data("tabla");
-		hacerAjax(tabla,page);
+		pedirListadoPaginado(tabla,page);
 	});
 	/*BUSCADOR DE LETRAS NUMS Y SIMBOLOS TOLERANTE DE MAYUSCULAS Y MINUSCULAS*/
-	$(".search").keyup(function(e){
-		var valor= $(this).val().toLowerCase();
-		var y=0;
-		var str="";
-		$(".activo tbody tr").each(function(key){
-			y=0;
-			$($(this).find("td")).each(function(key2){
-				str = $(this).html().toLowerCase();
-				if(str.indexOf(valor)<0){
-					y++;
-				}else{
-					y=0;
-					return false;
-				}
-			});
-			if(y!=0){
-				if($(this).hasClass("dntr")){
-				
-				}else{
-					$(this).addClass("dntr");
-				}
-			}else{
-				if($(this).hasClass("dntr")){
-					$(this).removeClass("dntr");
-				}
-			}
+		$(".search").keyup(function(e){
+			searchText();
 		});
-	});
+		//ON PASTE 
+		$(".search").bind("paste", function(e){
+		    setTimeout(function(e) {
+		    	searchText();
+	        }, 50);
+		} );
 	$(".nav-item:not(:first-child)").on("click",function(e){
 		$(".activo").removeClass("activo");
 		$(".prev").removeClass("disabled");
 		$(".next").removeClass("disabled");
 		
 		var tabla= $(this).data("tabla");
-		var html=`Listado de ${tabla} <a class="pa" data-toggle="modal" data-target="#Modal${tabla}"><i class="fas fa-plus"></i></a>`;
+		var html=`Listado de ${tabla} 
+					<a class="pa" data-toggle="modal" data-target="#Modal${tabla}">
+						<i class="fas fa-plus"></i>
+					</a>`;
 		$(".title").html(html);
 		
-		hacerAjax(tabla,page);
+		pedirListadoPaginado(tabla,page);
 	});
 	$("#form-pais").submit(function(e){
 		e.preventDefault();
-		var tabla = "paises";
+		const tabla = "paises";
 
-		var nombre = $(this).find("#nombre").val();
-		var codigo = $(this).find("#codigo").val();
-		var pais = {nombre,codigo};
-		if(saveObject(tabla,pais)){
-			optionsNacionalidades();
-		}else{
-			
-		}
+		const nombre = $(this).find("#nombre").val();
+		const codigo = $(this).find("#codigo").val();
+		const pais = {nombre,codigo};
+		saveObject(tabla,pais);
 		
 	});
 	$("#form-persona").submit(function(e){
 		e.preventDefault();
 		var tabla = "personas";
 
-		var nombre = $(this).find("#nombre").val();
-		var apellidos = $(this).find("#apellidos").val();
-		var dni = $(this).find("#dni").val();
-		var nacionalidades = $(this).find("#nacionalidades").val();
+		const nombre = $(this).find("#nombre").val();
+		const apellidos = $(this).find("#apellidos").val();
+		const dni = $(this).find("#dni").val();
+		const nacionalidades = $(this).find("#nacionalidades").val();
 		
-		var persona = {nombre,apellidos,dni,nacionalidades};
-		if(saveObject(tabla,persona)){
-			optionsPersonas();
-		}else{
-			
-		}
+		const persona = {nombre,apellidos,dni,nacionalidades};
+		saveObject(tabla,persona);
+		
 	});
 	$("#form-edificio").submit(function(e){
 		e.preventDefault();
-		var tabla = "edificios";
+		const tabla = "edificios";
 
-		var nombre = $(this).find("#nombre").val();
-		var codigoEdificio = $(this).find("#codigoEdificio").val();
-		var latitud = $(this).find("#latitud").val();
-		var longitud = $(this).find("#longitud").val();
-		var altitud = $(this).find("#altitud").val();
-		var dueño = $(this).find("#dueño").val();
-		var edificio = {nombre,codigoEdificio,latitud,longitud,altitud,dueño};
-		if(saveObject(tabla,edificio)){
-			optionsEdificios();
-		}else{
-			
-		}
+		const nombre = $(this).find("#nombre").val();
+		const codigoEdificio = $(this).find("#codigoEdificio").val();
+		const latitud = $(this).find("#latitud").val();
+		const longitud = $(this).find("#longitud").val();
+		const altitud = $(this).find("#altitud").val();
+		const dueño = $(this).find("#dueño").val();
+		const edificio = {nombre,codigoEdificio,latitud,longitud,altitud,dueño};
+		saveObject(tabla,edificio);
+
 	});
 	$("#form-empresa").submit(function(e){
 		e.preventDefault();
-		var tabla = "empresas";
+		const tabla = "empresas";
 
-		var nombre = $(this).find("#nombre").val();
-		var codigoEmpresa = $(this).find("#codigoEmpresa").val();
-		var presidenteActual = $(this).find("#presidenteActual").val();
-		var sedes = $(this).find("#sedes").val();
-		var edificio = {nombre,codigoEmpresa,presidenteActual,sedes};
-		if(saveObject(tabla,edificio)){
-			optionsEmpresas();
-		}else{
-			
-		}
+		const nombre = $(this).find("#nombre").val();
+		const codigoEmpresa = $(this).find("#codigoEmpresa").val();
+		const presidenteActual = $(this).find("#presidenteActual").val();
+		const sedes = $(this).find("#sedes").val();
+		const edificio = {nombre,codigoEmpresa,presidenteActual,sedes};
+		saveObject(tabla,edificio);
 	});
 	$("#form-edit-pais").submit(function(e){
 		e.preventDefault();
-		let tabla = $(this).find("#id-pais").val();
-		let nombre = $(this).find("#nombre").val();
-		let codigo = $(this).find("#codigo").val();
-		let pais = {nombre,codigo};
-		let resp= editObject(tabla,pais);
-		if(resp){
-			let td =$(".activo tbody tr td:last-child");
-			$(td).each(function(e){
-				if($(this).find(".btn-warning").data("url")==tabla){
-					$(this).prev().html(pais.codigo);
-					$(this).prev().prev().html(pais.nombre);
-					return false;
-				}
-			});
-			optionsNacionalidades();
-		}else{
-			
-		}
+		const id = $(this).find("#id-pais").val();
+		const tabla = "paises";
+		const nombre = $(this).find("#nombre").val();
+		const codigo = $(this).find("#codigo").val();
+		const pais = {id,nombre,codigo};
+		const td =$(".activo tbody tr td:last-child");
+		editObject(tabla,pais,td);
 		
 	});
 	$("#form-edit-persona").submit(function(e){
 		e.preventDefault();
-		let tabla = $(this).find("#id-persona").val();
-		let nombre = $(this).find("#nombre").val();
-		let apellidos = $(this).find("#apellidos").val();
-		let dni = $(this).find("#dni").val();
-		let nacionalidades = $(this).find("#nacionalidades").val();
-		let persona = {nombre,apellidos,dni,nacionalidades};
-		let resp= editObject(tabla,persona);
-		if(resp){
-			let td =$(".activo tbody tr td:last-child");
-			let nacionalidadesTexto="";
-			$(td).each(function(e){
-				if($(this).find(".btn-warning").data("url")==tabla){
-					$("#form-edit-persona #nacionalidades option:selected").each(function(key){
-						if(key==0){
-							nacionalidadesTexto=$(this).html();
-						}else{
-							nacionalidadesTexto+="," + $(this).html();
-						}
-						
-					});
-					$(this).prev().html(nacionalidadesTexto);
-					$(this).prev().prev().html(dni);
-					$(this).prev().prev().prev().html(apellidos);
-					$(this).prev().prev().prev().prev().html(nombre);
-					return false;
-				}
-			});
-			optionsPersonas();
-		}else{
+		const id = $(this).find("#id-persona").val();
+		const tabla = "personas";
+		const nombre = $(this).find("#nombre").val();
+		const apellidos = $(this).find("#apellidos").val();
+		const dni = $(this).find("#dni").val();
+		const nacionalidades = $(this).find("#nacionalidades").val();
+		const persona = {id,nombre,apellidos,dni,nacionalidades};
+		const td =$(".activo tbody tr td:last-child");
+		editObject(tabla,persona,td);
+		
 			
-		}
 	});
 	$("#form-edit-edificio").submit(function(e){
 		e.preventDefault();
-		let tabla = $(this).find("#id-edificio").val();
-		let nombre = $(this).find("#nombre").val();
-		let codigoEdificio = $(this).find("#codigoEdificio").val();
-		let latitud = $(this).find("#latitud").val();
-		let longitud = $(this).find("#longitud").val();
-		let altitud = $(this).find("#altitud").val();
-		let dueño = $(this).find("#dueño").val();
-		let edificio = {nombre,codigoEdificio,latitud,longitud,altitud,dueño};
-		if(editObject(tabla,edificio)){
-			optionsEdificios();
-		}else{
+		const id = $(this).find("#id-edificio").val();
+		const tabla = "edificios";
+		const nombre = $(this).find("#nombre").val();
+		const codigoEdificio = $(this).find("#codigoEdificio").val();
+		const latitud = $(this).find("#latitud").val();
+		const longitud = $(this).find("#longitud").val();
+		const altitud = $(this).find("#altitud").val();
+		const dueño = $(this).find("#dueño").val();
+		const edificio = {id,nombre,codigoEdificio,latitud,longitud,altitud,dueño};
+		const td =$(".activo tbody tr td:last-child");
+		editObject(tabla,edificio,td);
 			
-		}
 	});
 	$("#form-edit-empresa").submit(function(e){
 		e.preventDefault();
-		let tabla = $(this).find("#id-empresa").val();
-
-		let nombre = $(this).find("#nombre").val();
-		let codigoEmpresa = $(this).find("#codigoEmpresa").val();
-		let presidenteActual = $(this).find("#presidenteActual").val();
-		let sedes = $(this).find("#sedes").val();
-		let edificio = {nombre,codigoEmpresa,presidenteActual,sedes};
-		if(editObject(tabla,edificio)){
-			optionsEmpresas();
-		}else{
-			
-		}
+		const id = $(this).find("#id-empresa").val();
+		const tabla = "empresas";
+		const nombre = $(this).find("#nombre").val();
+		const codigoEmpresa = $(this).find("#codigoEmpresa").val();
+		const presidenteActual = $(this).find("#presidenteActual").val();
+		const sedes = $(this).find("#sedes").val();
+		const edificio = {id,nombre,codigoEmpresa,presidenteActual,sedes};
+		const td =$(".activo tbody tr td:last-child");
+		editObject(tabla,edificio,td);
 		
 	});
 });
+function searchText(){
+	const valor= $(".search").val().toLowerCase();
+	var y=0;
+	var str="";
+	$(".activo tbody tr").each(function(key){
+		y=0;
+		$($(this).find("td")).each(function(key2){
+			str = $(this).html().toLowerCase();
+			if(str.indexOf(valor)<0){
+				y++;
+			}else{
+				y=0;
+				return false;
+			}
+		});
+		if(y!=0){
+			if($(this).hasClass("dntr")){
+			
+			}else{
+				$(this).addClass("dntr");
+			}
+		}else{
+			if($(this).hasClass("dntr")){
+				$(this).removeClass("dntr");
+			}
+		}
+	});
+}
 function saveObject(tabla,object){
-	let opcionesAjax = {
+	const opcionesAjax = {
             url: URL+tabla,
             method: 'POST',
             data: JSON.stringify(object),
             contentType: 'application/json',
             dataType: 'json'
         };
+	let msj;
+	let tipo;
 	$.ajax(opcionesAjax)
 	.done(function(respuesta){
-		$(".close").click();
-		return true;
+		if(tabla=="paises"){
+			optionsNacionalidades();
+			msj= "País guardado correctamente!";
+			$("#form-pais")[0].reset();
+		}else if(tabla=="personas"){
+			optionsPersonas();
+			msj= "Persona guardada correctamente!";
+			$("#form-persona")[0].reset();
+		}else if(tabla=="empresas"){
+			optionsEmpresas();
+			msj= "Empresa guardada correctamente!";
+			$("#form-empresa")[0].reset();
+		}else if(tabla=="edificios"){
+			optionsEdificios();
+			msj= "Edificio guardado correctamente!";
+			$("#form-edificio")[0].reset();
+		}
+
+		tipo ='success';
 	}).fail(function(respuesta){
-		console.log('Fallo al guardar el/la ' +tabla);
-		return false;
+		if(tabla=="paises"){
+			msj = "Error al intentar guardar el país. Por favor vuelva a intentarlo";
+		}else if(tabla=="personas"){
+			msj = "Error al intentar guardar la persona. Por favor vuelva a intentarlo";
+		}else if(tabla=="empresas"){
+			msj = "Error al intentar guardar la empresa. Por favor vuelva a intentarlo";
+		}else if(tabla=="edificios"){
+			msj = "Error al intentar guardar el edificio. Por favor vuelva a intentarlo";
+		}
+
+		tipo='danger';
+	}).always(function(){
+		$(".close").click()
+		messageStatus(msj,tipo);
 	});
+	
 }
-async function editObject(tabla,object){
-	let opcionesAjax = {
-            url: tabla,
+function editObject(tabla,object,td){
+	const urlObjeto = URL+tabla+'/'+object.id
+	const opcionesAjax = {
+            url: urlObjeto,
             method: 'PUT',
             data: JSON.stringify(object),
             contentType: 'application/json',
             dataType: 'json'
         };
-
-	
-	return await ajax1(opcionesAjax);
-	
-}
-async function ajax1(opcionesAjax){
-	let res;
+	let msj;
+	let tipo;
 	$.ajax(opcionesAjax)
 	.done(function(respuesta){
-		$(".close").click();
-		res = true;
+		if(tabla=="paises"){
+			msj= 'País con id: ' + respuesta.id + ' editado correctamente!';
+			$(td).each(function(e){
+				if($(this).find(".btn-warning").data("url")==urlObjeto){
+					$(this).prev().html(respuesta.codigo);
+					$(this).prev().prev().html(respuesta.nombre);
+					return false;
+				}
+			});
+			optionsNacionalidades();
+		}else if(tabla=="personas"){
+			msj= 'Persona con id: ' + respuesta.id + ' editada correctamente!';
+			let nacionalidades="";
+			$(td).each(function(e){
+				if($(this).find(".btn-warning").data("url")==urlObjeto){
+					$(respuesta._embedded.nacionalidades).each(function(key){
+						nacionalidades+=this.nombre + ',';
+					});
+					nacionalidades = nacionalidades.substring(0,nacionalidades.length-1);
+					$(this).prev().html(nacionalidades);
+					$(this).prev().prev().html(respuesta.dni);
+					$(this).prev().prev().prev().html(respuesta.apellidos);
+					$(this).prev().prev().prev().prev().html(respuesta.nombre);
+					return false;
+				}
+			});
+			optionsPersonas();
+		}else if(tabla=="empresas"){
+			msj= 'Empresa con id: ' + respuesta.id + ' editada correctamente!';
+			let sedes="";
+			console.log(respuesta);
+			$(td).each(function(e){
+				if($(this).find(".btn-warning").data("url")==urlObjeto){
+					$(respuesta._embedded.sedes).each(function(key){
+						sedes+=this.nombre + ',';
+					});
+					sedes = sedes.substring(0,sedes.length-1);
+					$(this).prev().html(sedes);
+					$(this).prev().prev().html(respuesta._embedded.presidenteActual.nombre);
+					$(this).prev().prev().prev().html(respuesta.codigoEmpresa);
+					$(this).prev().prev().prev().prev().html(respuesta.nombre);
+					return false;
+				}
+			});
+		}else if(tabla=="edificios"){
+			msj= 'Edificio con id: ' + respuesta.id + ' editada correctamente!';
+			$(td).each(function(e){
+				if($(this).find(".btn-warning").data("url")==urlObjeto){
+					
+					$(this).prev().html(respuesta._embedded.dueño.nombre);
+					$(this).prev().prev().html(respuesta.altitud);
+					$(this).prev().prev().prev().html(respuesta.longitud);
+					$(this).prev().prev().prev().prev().html(respuesta.latitud);
+					$(this).prev().prev().prev().prev().prev().html(respuesta.codigoEdificio);
+					$(this).prev().prev().prev().prev().prev().prev().html(respuesta.nombre);
+					return false;
+				}
+			});
+			optionsEdificios();
+		}
+
+		tipo ='success';
 	}).fail(function(respuesta){
-		console.log('Fallo al guardar el/la ' +tabla);
-		res = false;
+		if(tabla=="paises"){
+			msj = "Error al intentar editar el país con el id: " + objeto.id;
+		}else if(tabla=="personas"){
+			msj = "Error al intentar editar la persona con el id: " + objeto.id;
+		}else if(tabla=="empresas"){
+			msj = "Error al intentar editar la empresa con el id: " + objeto.id;
+		}else if(tabla=="edificios"){
+			msj = "Error al intentar editar el edificio con el id: " + objeto.id;
+		}
+		
+		
+		tipo='danger';
+	}).always(function(respuesta){
+		$(".close").click();
+		messageStatus(msj,tipo);
 	});
-	return res
+	
 }
 //Listar respuesta del ajax para tabla personas
 function obtenerListadoPersonas(tabla,respuesta){
@@ -355,7 +419,7 @@ function obtenerListadoEdificios(tabla,respuesta){
 	let html;
 	let edificios= respuesta._embedded.edificios;
 	$(edificios).each(function(key){
-		console.log(this);
+		
 		html=`
 			<tr>
 				<td>${this.nombre}</td>
@@ -364,9 +428,8 @@ function obtenerListadoEdificios(tabla,respuesta){
 				<td>${this.longitud}</td>
 				<td>${this.altitud}</td>
 				<td>${this._embedded.dueño.nombre}</td>
-				<td>${this._embedded.sedes.nombre}</td>
 				<td>
-					<a href="#" class="btn btn-warning" data-url="${this._links.self.href}" onclick="fillFormEmpresas(this);" data-toggle="modal" data-target="#ModalEditempresas">
+					<a href="#" class="btn btn-warning" data-url="${this._links.self.href}" onclick="fillFormEdificios(this);" data-toggle="modal" data-target="#ModalEditedificios">
 						<i class="fas fa-edit"></i>
 					</a>
 					<a href="#" class="btn btn-danger" data-url="${this._links.self.href}" onclick="deleteRegister(this);">
@@ -384,10 +447,10 @@ function getPage(t){
 	let page=parseInt($(t).html())-1;
 
 	let tabla = $(".activo").data("tabla");
-	hacerAjax(tabla,page);
+	pedirListadoPaginado(tabla,page);
 }
 //Ajax para listado de tablas
-function hacerAjax(tabla,page){
+function pedirListadoPaginado(tabla,page){
 	$.ajax({
 		url:URL+tabla+'?page='+page+'&size='+size,
 		method:'GET',
@@ -436,7 +499,7 @@ function hacerAjax(tabla,page){
 			obtenerListadoEdificios(tabla,respuesta);
 		}
 	}).fail(function(respuesta){
-		console.log('Fallo al guardar el/la ' +tabla);
+		msj="Error al cargar el listado. Vuelve a intentarlo";
 	});
 }
 //RELLENAR SELECT DE PAISES
@@ -451,7 +514,7 @@ function optionsNacionalidades(){
 			$(".nacionalidades").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
-		console.log('Fallo al guardar el/la ' +tabla);
+		console.log('Fallo al recargar el select de nacionalidades');
 	});
 }
 //RELLENAR SELECT DE EMPRESAS
@@ -466,7 +529,7 @@ function optionsEmpresas(){
 			$(".dueño").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
-		console.log('Fallo al guardar el/la ' +tabla);
+		console.log('Fallo al recargar el select de empresas');
 	});
 }
 //RELLENAR SELECT DE EDIFICIOS
@@ -481,7 +544,7 @@ function optionsEdificios(){
 			$(".sedes").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
-		console.log('Fallo al guardar el/la ' +tabla);
+		console.log('Fallo al recargar el select de edificios');
 	});
 }
 //RELLENAR SELECT DE PERSONAS
@@ -497,12 +560,14 @@ function optionsPersonas(){
 			$(".presidenteActual").append(`<option value="${this._links.self.href}">${this.nombre}</option>`);
 		});
 	}).fail(function(respuesta){
-		console.log('Fallo al guardar el/la ' +tabla);
+		console.log('Fallo al recargar el select de personas');
 	});
 }
 /*BORRAR CUALQUIER REGISTRO DE CUALQUIER TABLA*/
 function deleteRegister(t){
 	let res= confirm("¿Estás seguro de borrar este registro?");
+	let msj;
+	let tipo;
 	if(res){
 		$.ajax({
 			url:$(t).data("url"),
@@ -510,9 +575,15 @@ function deleteRegister(t){
 			contentType: "application/json"
 		}).done(function(respuesta){
 			$(t).parent().parent().remove();
+			msj='Registro eliminado existosamente';
+			tipo='success';
+			messageStatus(msj,tipo);
 		}).fail(function(respuesta){
-			console.log('Fallo al cargar Eliminar el registro');
+			msj='Error al eliminar el registro. Vuelve a intentarlo';
+			tipo='danger';
+			messageStatus(msj,tipo);
 		});
+		
 	}else{
 		
 	}
@@ -528,7 +599,7 @@ function fillFormPersonas(t){
 		$("#form-edit-persona #nombre").val(respuesta.nombre);
 		$("#form-edit-persona #apellidos").val(respuesta.apellidos);
 		$("#form-edit-persona #dni").val(respuesta.dni);
-		$("#form-edit-persona #id-persona").val(respuesta._links.self.href);
+		$("#form-edit-persona #id-persona").val(respuesta.id);
 		var nacionalidad;
 		$(respuesta._embedded.nacionalidades).each(function(key){
 			nacionalidad=this;
@@ -540,7 +611,9 @@ function fillFormPersonas(t){
 			});
 		});
 	}).fail(function(respuesta){
-		console.log('Fallo al cargar Eliminar el registro');
+		let msj="No se pudo cargar el registro";
+		let tipo="danger";
+		messageStatus(msj,tipo);
 	});
 }
 function fillFormPaises(t){
@@ -551,9 +624,11 @@ function fillFormPaises(t){
 	}).done(function(respuesta){
 		$("#form-edit-pais #nombre").val(respuesta.nombre);
 		$("#form-edit-pais #codigo").val(respuesta.codigo);
-		$("#form-edit-pais #id-pais").val(respuesta._links.self.href);
+		$("#form-edit-pais #id-pais").val(respuesta.id);
 	}).fail(function(respuesta){
-		console.log('Fallo al cargar Eliminar el registro');
+		let msj="No se pudo cargar el registro";
+		let tipo="danger";
+		messageStatus(msj,tipo);
 	});
 }
 function fillFormEmpresas(t){
@@ -562,7 +637,8 @@ function fillFormEmpresas(t){
 		method:'GET',
 		contentType: "application/json"
 	}).done(function(respuesta){
-		$("#form-edit-empresa #id-empresa").val(respuesta._links.self.href);
+		$("#form-edit-empresa")[0].reset();
+		$("#form-edit-empresa #id-empresa").val(respuesta.id);
 		$("#form-edit-empresa #nombre").val(respuesta.nombre);
 		$("#form-edit-empresa #codigoEmpresa").val(respuesta.codigoEmpresa);
 		$("#form-edit-empresa #presidenteActual").val(respuesta.presidenteActual);
@@ -586,7 +662,9 @@ function fillFormEmpresas(t){
 			});
 		});
 	}).fail(function(respuesta){
-		console.log('Fallo al cargar el registro');
+		let msj="No se pudo cargar el registro";
+		let tipo="danger";
+		messageStatus(msj,tipo);
 	});
 }
 function fillFormEdificios(t){
@@ -595,7 +673,8 @@ function fillFormEdificios(t){
 		method:'GET',
 		contentType: "application/json"
 	}).done(function(respuesta){
-		$("#form-edit-edificio #id-edificio").val(respuesta._links.self.href);
+		$("#form-edit-edificio")[0].reset();
+		$("#form-edit-edificio #id-edificio").val(respuesta.id);
 		$("#form-edit-edificio #nombre").val(respuesta.nombre);
 		$("#form-edit-edificio #codigoEdificio").val(respuesta.codigoEdificio);
 		$("#form-edit-edificio #latitud").val(respuesta.latitud);
@@ -612,6 +691,19 @@ function fillFormEdificios(t){
 				}
 			});
 	}).fail(function(respuesta){
-		alert('Fallo al cargar el registro');
+		let msj="No se pudo cargar el registro";
+		let tipo="danger";
+		messageStatus(msj,tipo);
 	});
+}
+function messageStatus(msj,tipo){
+	if($(".alert-dismissible").length!=0){
+		$(".alert-dismissible").remove();
+	}
+	$(".title").before(`<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+								  ${msj}
+								  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								  	<span aria-hidden="true">&times;</span>
+								  </button>
+							  </div>`);
 }
