@@ -1,0 +1,33 @@
+@charset "UTF-8";
+body{
+	padding:0;
+	margin:0;
+	font-family: arial,sans-serif;
+	min-height:100vh;
+}
+ul,li{
+	list-style:none;
+}
+.card .card-img-top{
+	height: 400px;
+}
+button.no-btn{
+	background-color: transparent;
+    border: 0;
+}
+.text-danger:hover{
+	color:#af3541 !important;
+}
+.logo{
+	width:60px;
+	height:60px;
+}
+.footer{
+	width: 100%;
+    bottom: 0;
+}
+@media (max-width: 700px) {
+	.card .card-img-top{
+		height: 250px;
+	}
+}
